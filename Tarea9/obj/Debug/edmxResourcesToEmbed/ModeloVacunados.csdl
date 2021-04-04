@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="vacunadosrdv3Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="municipios">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="ProvinciaId" Type="Int32" Nullable="false" />
+    <Property Name="Latitud" Type="Double" />
+    <Property Name="Longitud" Type="Double" />
+    <NavigationProperty Name="provincias" Relationship="Self.FK__municipio__Provi__267ABA7A" FromRole="municipios" ToRole="provincias" />
+  </EntityType>
+  <EntityType Name="pacientes">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Cedula" Type="String" MaxLength="11" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Apellido" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Telefono" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Correo" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="FechaNacimiento" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="TipoSangreId" Type="Int32" Nullable="false" />
+    <Property Name="ProvinciaId" Type="Int32" Nullable="false" />
+    <Property Name="Direccion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="Le_Dio_Covid" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+    <Property Name="Justificacion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="latitud" Type="Double" Nullable="false" />
+    <Property Name="longitud" Type="Double" Nullable="false" />
+    <NavigationProperty Name="provincias" Relationship="Self.FK__pacientes__Provi__2C3393D0" FromRole="pacientes" ToRole="provincias" />
+    <NavigationProperty Name="TipoSangre" Relationship="Self.FK__pacientes__TipoS__2B3F6F97" FromRole="pacientes" ToRole="TipoSangre" />
+  </EntityType>
+  <EntityType Name="provincias">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="municipios" Relationship="Self.FK__municipio__Provi__267ABA7A" FromRole="provincias" ToRole="municipios" />
+    <NavigationProperty Name="pacientes" Relationship="Self.FK__pacientes__Provi__2C3393D0" FromRole="provincias" ToRole="pacientes" />
+  </EntityType>
+  <EntityType Name="TipoSangre">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="pacientes" Relationship="Self.FK__pacientes__TipoS__2B3F6F97" FromRole="TipoSangre" ToRole="pacientes" />
+  </EntityType>
+  <Association Name="FK__municipio__Provi__267ABA7A">
+    <End Role="provincias" Type="Self.provincias" Multiplicity="1" />
+    <End Role="municipios" Type="Self.municipios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="provincias">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="municipios">
+        <PropertyRef Name="ProvinciaId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__pacientes__Provi__2C3393D0">
+    <End Role="provincias" Type="Self.provincias" Multiplicity="1" />
+    <End Role="pacientes" Type="Self.pacientes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="provincias">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="pacientes">
+        <PropertyRef Name="ProvinciaId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__pacientes__TipoS__2B3F6F97">
+    <End Role="TipoSangre" Type="Self.TipoSangre" Multiplicity="1" />
+    <End Role="pacientes" Type="Self.pacientes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="TipoSangre">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="pacientes">
+        <PropertyRef Name="TipoSangreId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="DB_A722D3_vacunadosrdv3Entities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="municipios" EntityType="Self.municipios" />
+    <EntitySet Name="pacientes" EntityType="Self.pacientes" />
+    <EntitySet Name="provincias" EntityType="Self.provincias" />
+    <EntitySet Name="TipoSangre" EntityType="Self.TipoSangre" />
+    <AssociationSet Name="FK__municipio__Provi__267ABA7A" Association="Self.FK__municipio__Provi__267ABA7A">
+      <End Role="provincias" EntitySet="provincias" />
+      <End Role="municipios" EntitySet="municipios" />
+    </AssociationSet>
+    <AssociationSet Name="FK__pacientes__Provi__2C3393D0" Association="Self.FK__pacientes__Provi__2C3393D0">
+      <End Role="provincias" EntitySet="provincias" />
+      <End Role="pacientes" EntitySet="pacientes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__pacientes__TipoS__2B3F6F97" Association="Self.FK__pacientes__TipoS__2B3F6F97">
+      <End Role="TipoSangre" EntitySet="TipoSangre" />
+      <End Role="pacientes" EntitySet="pacientes" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
