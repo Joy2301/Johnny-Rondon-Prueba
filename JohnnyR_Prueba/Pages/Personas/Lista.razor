@@ -1,0 +1,68 @@
+@page "/Lista"
+
+<div class="container">
+
+    <h1 class="text-center display-5">Personas</h1>
+    <br>
+
+    <div>
+        <input type="text" placeholder="🔎 Ingrese el Nombre" class="form-control" @bind-value="@Filtro">
+        <br>
+        <button class="btn btn-primary" @onclick="Filtrar">Buscar</button>
+        <button class="btn btn-secondary" @onclick="MostrarTodos">Mostrar Todos</button>
+    </div>
+    <br>
+
+    @* Muestro los datos de las Personas usando una tarjeta como plantilla *@
+    <div class="row">  
+        @foreach (Persona P in PersonasFiltradas)
+        {
+        <div class="col-md-4">
+            <div class="card profile-card-1">
+                <img src="Imagenes/BareservasImagen.jpeg" alt="profile-sample1" class="background"/>
+                <img src="Imagenes/PersonaFotoPerfil.png" alt="profile-image" class="profile"/>
+                
+                <div class="card-content">
+                    
+                    <h2>@P.Nombre<small>@P.FechaNacimiento</small></h2>
+                    
+                    <div class="icon-block">
+                        <a href="/Registrar/@P.Id" >
+                            <i class="fas fa-pen"></i>
+                        </a>
+                        <a href="/Eliminar/@P.Id">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>   
+        }     
+    </div>
+
+</div>
+
+@code{
+
+    public string Filtro { get; set; }
+
+    //Creamos una lista con las personas en la Base de datos
+    static List<Persona> GetPersonas() => new JohnnyRondon_PruebaContext().Persona.ToList();
+
+    //Nueva lista para hacer la busqueda de personas
+    public List<Persona> PersonasFiltradas { get; set; } = GetPersonas();
+    private void Filtrar()
+    {
+        PersonasFiltradas = PersonasFiltradas.Where(
+            p => p.Nombre.ToLower().Contains(Filtro.ToLower())
+        ).ToList();
+    }
+
+    //Mostramos la lista completa de personas
+    private void MostrarTodos()
+    {
+        PersonasFiltradas = GetPersonas();
+        Filtro = "";
+    }
+}

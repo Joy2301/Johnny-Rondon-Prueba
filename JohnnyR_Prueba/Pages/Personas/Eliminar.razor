@@ -1,0 +1,84 @@
+@page "/Eliminar"
+@page "/Eliminar/{id:int}"
+
+@inject NavigationManager NavigationManager
+@inject IPersonaService PersonaService
+
+<div class="container">
+
+    <h1 class="display-6">Eliminar Persona</h1>
+    <br>
+    <p>
+        La siguiente Persona sera eliminada permanentemente
+    </p>
+    <br>
+
+    <EditForm Model="@persona">
+        <table class="table">
+            <tr>
+                <td> 
+                    <strong>
+                        <p>Nombre:</p>
+                    </strong>
+                </td>
+                <td><input type="text" class="form-control col-sm-4" readonly placeholder="Ingresa el Nombre" @bind="@persona.Nombre"></td>
+            </tr>
+            <tr>
+                <td> 
+                    <strong>
+                        <p>Fecha de Nacimiento:</p>
+                    </strong>
+                </td>
+                <td>
+                    <InputDate class="form-control col-sm-4" readonly placeholder="Ingresa la Fecha de nacimiento" @bind-Value="@persona.FechaNacimiento"/>
+                <br>
+                @Estado
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Eliminar" class="btn btn-danger" @onclick="DeletePersona"/>
+                    <input type="button" value="Cancelar" class="btn btn-secondary" @onclick="Cancelar"/>
+                </td>
+            </tr>
+        </table>
+    </EditForm>
+
+</div>
+
+
+@code {
+    [Parameter]
+    public int id {get; set;}
+    public string Estado { get; set; }
+    Persona persona = new Persona();
+
+    protected async Task DeletePersona()
+    {
+        //Eliminamos a la persona
+        await PersonaService.DeletePersona(id);
+
+        Estado = "Eliminado Exitosamente";
+
+        //Volvemos a la lista de Personas
+        NavigationManager.NavigateTo("/Lista");
+    }
+
+    /*  
+        Una vez obtenemos un ID por parametro de la url 
+        verificamos que sea distinto de 0 y traemos los datos del registro al formulario
+    */
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            persona = await PersonaService.GetDetailsPersona(id);
+        }
+    }
+
+    //Volvemos a la pagina inicial
+    private void Cancelar()
+    {
+        NavigationManager.NavigateTo("/Lista");
+    }
+}
