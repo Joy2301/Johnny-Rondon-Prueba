@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using JohnnyR_Prueba.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace JohnnyR_Prueba.Data.Personas
 {
@@ -21,6 +22,11 @@ namespace JohnnyR_Prueba.Data.Personas
             _context.Persona.Remove(persona);
 
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<Persona>> GetAllPersonas()
+        {
+            return await _context.Persona.ToListAsync();
         }
 
         public async Task<Persona> GetDetailsPersona(int id)

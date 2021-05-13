@@ -1,10 +1,12 @@
 @page "/Lista"
 
+@inject IPersonaService PersonaService
+
 <div class="container">
 
     <h1 class="text-center display-5">Personas</h1>
     <br>
-
+    @Estado
     <div>
         <input type="text" placeholder="🔎 Ingrese el Nombre" class="form-control" @bind-value="@Filtro">
         <br>
@@ -12,49 +14,72 @@
         <button class="btn btn-secondary" @onclick="MostrarTodos">Mostrar Todos</button>
     </div>
     <br>
-
-    @* Muestro los datos de las Personas usando una tarjeta como plantilla *@
-    <div class="row">  
-        @foreach (Persona P in PersonasFiltradas)
-        {
-        <div class="col-md-4">
-            <div class="card profile-card-1">
-                <img src="Imagenes/BareservasImagen.jpeg" alt="profile-sample1" class="background"/>
-                <img src="Imagenes/PersonaFotoPerfil.png" alt="profile-image" class="profile"/>
-                
-                <div class="card-content">
+    
+    @* Mostramos un gif hasta que obtenemos los registros *@
+    @if(persona == null)
+    {
+        <div align="center">
+            <img src="Imagenes/Cargando.gif" alt="Cargando" width="350"/>
+        </div>
+    }
+    else
+    {
+        @* Muestro los datos de las Personas usando una tarjeta como plantilla *@
+        <div class="row">  
+            @foreach (var P in PersonasFiltradas)
+            {
+            <div class="col-md-4">
+                <div class="card profile-card-1">
+                    <img src="Imagenes/BareservasImagen.jpeg" alt="profile-sample1" class="background"/>
+                    <img src="Imagenes/PersonaFotoPerfil.png" alt="profile-image" class="profile"/>
                     
-                    <h2>@P.Nombre<small>@P.FechaNacimiento</small></h2>
-                    
-                    <div class="icon-block">
-                        <a href="/Registrar/@P.Id" >
-                            <i class="fas fa-pen"></i>
-                        </a>
-                        <a href="/Eliminar/@P.Id">
-                            <i class="fas fa-trash-alt"></i>
-                        </a>
+                    <div class="card-content">
+                        
+                        <h2>@P.Nombre<small>@P.FechaNacimiento.ToShortDateString()</small></h2>
+                        
+                        <div class="icon-block">
+                            <a href="/Guardar/@P.Id" >
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <a href="/Eliminar/@P.Id">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
                     </div>
+
                 </div>
-
-            </div>
-        </div>   
-        }     
-    </div>
-
+            </div>   
+            }     
+        </div>
+    }
 </div>
 
 @code{
 
-    public string Filtro { get; set; }
+    private IEnumerable<Persona> persona { get; set; }
+    private string Estado { get; set; }
+    private string Filtro { get; set; }
 
-    //Creamos una lista con las personas en la Base de datos
-    static List<Persona> GetPersonas() => new JohnnyRondon_PruebaContext().Persona.ToList();
+    //Traemos la lista de personas desde la base de datos
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            persona = await PersonaService.GetAllPersonas();
+            PersonasFiltradas = persona.ToList();
+        }
+        catch (Exception e)
+        {
+            
+            Estado = e.Message;
+        }
+    }
 
     //Nueva lista para hacer la busqueda de personas
-    public List<Persona> PersonasFiltradas { get; set; } = GetPersonas();
+    private List<Persona> PersonasFiltradas { get; set; }    
     private void Filtrar()
     {
-        PersonasFiltradas = PersonasFiltradas.Where(
+        PersonasFiltradas = persona.Where(
             p => p.Nombre.ToLower().Contains(Filtro.ToLower())
         ).ToList();
     }
@@ -62,7 +87,7 @@
     //Mostramos la lista completa de personas
     private void MostrarTodos()
     {
-        PersonasFiltradas = GetPersonas();
+        PersonasFiltradas = persona.ToList();
         Filtro = "";
     }
 }

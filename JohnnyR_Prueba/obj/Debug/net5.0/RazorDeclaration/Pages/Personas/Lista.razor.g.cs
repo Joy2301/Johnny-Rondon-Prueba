@@ -105,19 +105,33 @@ using JohnnyR_Prueba.Models;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 46 "C:\Users\mdela\Desktop\Proyectos\C#\JohnnyR_Prueba\Pages\Personas\Lista.razor"
+#line 57 "C:\Users\mdela\Desktop\Proyectos\C#\JohnnyR_Prueba\Pages\Personas\Lista.razor"
       
 
-    public string Filtro { get; set; }
+    private IEnumerable<Persona> persona { get; set; }
+    private string Estado { get; set; }
+    private string Filtro { get; set; }
 
-    //Creamos una lista con las personas en la Base de datos
-    static List<Persona> GetPersonas() => new JohnnyRondon_PruebaContext().Persona.ToList();
+    //Traemos la lista de personas desde la base de datos
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            persona = await PersonaService.GetAllPersonas();
+            PersonasFiltradas = persona.ToList();
+        }
+        catch (Exception e)
+        {
+            
+            Estado = e.Message;
+        }
+    }
 
     //Nueva lista para hacer la busqueda de personas
-    public List<Persona> PersonasFiltradas { get; set; } = GetPersonas();
+    private List<Persona> PersonasFiltradas { get; set; }    
     private void Filtrar()
     {
-        PersonasFiltradas = PersonasFiltradas.Where(
+        PersonasFiltradas = persona.Where(
             p => p.Nombre.ToLower().Contains(Filtro.ToLower())
         ).ToList();
     }
@@ -125,13 +139,14 @@ using JohnnyR_Prueba.Models;
     //Mostramos la lista completa de personas
     private void MostrarTodos()
     {
-        PersonasFiltradas = GetPersonas();
+        PersonasFiltradas = persona.ToList();
         Filtro = "";
     }
 
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IPersonaService PersonaService { get; set; }
     }
 }
 #pragma warning restore 1591

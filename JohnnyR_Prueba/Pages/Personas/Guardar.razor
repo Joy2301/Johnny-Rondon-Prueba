@@ -1,12 +1,12 @@
-@page "/Registrar"
-@page "/Registrar/{id:int}"
+@page "/Guardar"
+@page "/Guardar/{id:int}"
 
 @inject NavigationManager NavigationManager
 @inject IPersonaService PersonaService
 
 <div class="container">
 
-    <h1 class="display-6">Registro de Personas</h1>
+    <h1 class="display-6">Guardar Personas</h1>
     <br>
     <p>
         Utilize el formulario siguiente para registrar o actualizar a las Personas
@@ -17,22 +17,22 @@
         <table class="table">
             <tr>
                 <td> 
-                    <strong>
-                        <p>Nombre:</p>
-                    </strong>
+                    <p>
+                        <strong>Nombre:</strong>
+                    </p>
                 </td>
                 <td><input type="text" class="form-control col-sm-4" placeholder="Ingresa el Nombre" @bind="@persona.Nombre"></td>
             </tr>
             <tr>
                 <td> 
-                    <strong>
-                        <p>Fecha de Nacimiento:</p>
-                    </strong>
+                    <p>
+                        <strong>Fecha de Nacimiento:</strong>
+                    </p>
                 </td>
                 <td>
                     <InputDate class="form-control col-sm-4" placeholder="Ingresa la Fecha de nacimiento" @bind-Value="@persona.FechaNacimiento"/>
                 <br>
-                @Estado
+                <p>@Estado</p>
                 </td>
             </tr>
             <tr>
@@ -56,7 +56,7 @@
     protected async Task SavePersona()
     {
         //Comprobamos que no hay campos vacios
-        if(persona.Nombre == "" || persona.FechaNacimiento == null)
+        if(persona.Nombre == "")
         {
             Estado = "Debe rellenar todos los campos";
         }
@@ -72,12 +72,11 @@
                 //Volvemos a la lista de personas
                 NavigationManager.NavigateTo("/Lista");
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                Estado = "Hubo un Error, Trate de recargar la pagina";
+                Estado = $"Hubo un Error, {e.Message}";
             }
         }
-        
     }
 
     /*  

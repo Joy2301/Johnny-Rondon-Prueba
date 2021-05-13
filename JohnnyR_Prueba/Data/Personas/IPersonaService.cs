@@ -8,6 +8,7 @@ namespace JohnnyR_Prueba.Data.Personas
 {
     interface IPersonaService
     {
+        Task<IEnumerable<Persona>> GetAllPersonas();
         Task<Persona> GetDetailsPersona(int id);
         Task<bool> InsertPersona(Persona persona);
         Task<bool> UpdatePersona(Persona persona);
